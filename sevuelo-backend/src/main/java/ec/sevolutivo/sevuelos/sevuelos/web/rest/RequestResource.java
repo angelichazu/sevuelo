@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:4200","http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost:3000"})
 public class RequestResource {
 
     private final Logger log = LoggerFactory.getLogger(RequestResource.class);
@@ -46,12 +46,29 @@ public class RequestResource {
         return request.get();
     }
 
-    @PutMapping("/reserve")
-    public void reserve(@RequestBody Request request) {
-        log.debug("REST request to reserve a flight");
-        request.setStatus(RequestStatus.RESERVED);
-        requestRepository.save(request);
+    //Se agregó un nuevo WS para hacer uso de la consulta nueva y adicionalmente se utilizó una nueva estructura de consumo de manera demostrativa.
+    @GetMapping("/requestsByDestination")
+    public List<Request> getRequestByDestination(@RequestParam(name = "destination", required = true) String destination) {
+        log.debug("REST request to get Request by destination: {}", destination);
+        List<Request> requestList = requestRepository.findAllByDestination(destination);
+        return requestList;
     }
 
+    //Fue modificado el servicio, ya que era muy susceptible a errores al no tener un control del ID
+    @PutMapping("/reserve/{id}")
+    public void reserve(@PathVariable Long id) {
+        log.debug("REST request to reserve a flight");
+        try {
+            Optional<Request> requestFind = requestRepository.findById(id);
+            if (!requestFind.isPresent()) {
+                throw new RuntimeException("The requested flight is not available");
+            }
+            requestFind.get().setStatus(RequestStatus.RESERVED);
+            requestRepository.save(requestFind.get());
+        } catch (Exception e) {
+            log.debug("Error in REST request to reserve a flight: {}", e.getMessage());
+            throw new RuntimeException("A problem has occurred, please contact the administrator.");
+        }
+    }
 
 }
