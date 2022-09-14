@@ -50,23 +50,46 @@ public class RequestResource {
     @GetMapping("/requestsByDestination")
     public List<Request> getRequestByDestination(@RequestParam(name = "destination", required = true) String destination) {
         log.debug("REST request to get Request by destination: {}", destination);
-        List<Request> requestList = requestRepository.findAllByDestination(destination);
+        List<Request> requestList = requestRepository.findAllRequestsByDestination(destination);
         return requestList;
     }
 
     //Fue modificado el servicio, ya que era muy susceptible a errores al no tener un control del ID
-    @PutMapping("/reserve/{id}")
-    public void reserve(@PathVariable Long id) {
+    @PutMapping("/reserve/{id}/{state}")
+    public void reserve(@PathVariable Long id, @PathVariable String state) {
         log.debug("REST request to reserve a flight");
         try {
             Optional<Request> requestFind = requestRepository.findById(id);
             if (!requestFind.isPresent()) {
                 throw new RuntimeException("The requested flight is not available");
             }
-            requestFind.get().setStatus(RequestStatus.RESERVED);
+
+            if (state.equals("NEW")) {
+                requestFind.get().setStatus(RequestStatus.NEW);
+            } else if (state.equals("RESERVED")){
+                requestFind.get().setStatus(RequestStatus.RESERVED);
+            } else {
+                requestFind.get().setStatus(RequestStatus.NEW);
+            }
+
             requestRepository.save(requestFind.get());
         } catch (Exception e) {
             log.debug("Error in REST request to reserve a flight: {}", e.getMessage());
+            throw new RuntimeException("A problem has occurred, please contact the administrator.");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public void reserve(@PathVariable Long id ) {
+        log.debug("REST request to delete a flight");
+        try {
+            Optional<Request> requestFind = requestRepository.findById(id);
+            if (!requestFind.isPresent()) {
+                throw new RuntimeException("The requested flight is not available");
+            }
+            requestRepository.delete(requestFind.get());
+        } catch (Exception e) {
+            log.debug("Error in REST request to delete a flight: {}", e.getMessage());
             throw new RuntimeException("A problem has occurred, please contact the administrator.");
         }
     }

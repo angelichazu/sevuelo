@@ -16,4 +16,9 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
     //List<Request> findAllByName(String destination);
     List<Request> findAllByDestination(String destination);
 
+    @Query(value = "SELECT r " +
+            "FROM Request r " +
+            "WHERE UPPER(r.destination) LIKE CONCAT('%',UPPER(:destination),'%')")
+    List<Request> findAllRequestsByDestination(String destination);
+
 }

@@ -31,6 +31,10 @@ public class Request implements Serializable {
     @Column(name = "destination", length = 100, nullable = false)
     private String destination;
 
+    @Size(max = 300)
+    @Column(name = "description", length = 300, nullable = true)
+    private String description;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -68,6 +72,13 @@ public class Request implements Serializable {
         this.status = status;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public boolean equals(Object o) {
