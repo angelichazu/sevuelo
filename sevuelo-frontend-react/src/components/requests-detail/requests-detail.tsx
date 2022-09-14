@@ -18,8 +18,8 @@ export const RequestsDetail = () => {
   }, [param.id])
 
   const reserve = () => {
-    updateStatusReserve(request);
-    window.history.back();
+    updateStatusReserve(Number(param.id)).then(r => navigate(`/requests`));
+    //window.history.back();
   }
 
   return (

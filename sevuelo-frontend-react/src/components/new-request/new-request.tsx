@@ -6,6 +6,7 @@ import { Button } from 'primereact/button';
 import { defaultValue } from '../../shared/request.model';
 import { createRequest } from '../../services/requests.service';
 import '../../App.css';
+import {useNavigate} from "react-router-dom";
 
 export const NewRequest = () => {
 
@@ -14,14 +15,16 @@ export const NewRequest = () => {
     destination: ''
   }
   const { control, formState: { errors }, handleSubmit, reset } = useForm({ defaultValues });
+  const navigate = useNavigate();
 
   const onSubmit = (data: any) => {
+    console.log('DATA ', data);
     const newRequest = defaultValue;
     newRequest.passenger = data.passenger;
     newRequest.destination = data.destination;
-    createRequest(newRequest);
+    createRequest(newRequest).then(r => navigate(`/requests`));
     reset();
-    window.location.href = "/requests"
+    //window.location.href = "/requests"
   };
 
   return (

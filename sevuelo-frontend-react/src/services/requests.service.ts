@@ -13,9 +13,9 @@ export const getRequestById = (id: number) => {
   return axios.get<IRequest>(requestUrl);
 };
 
-export const updateStatusReserve = (request: IRequest) => {
-  const requestUrl = `${apiUrl}/reserve`;
-  return axios.put(requestUrl, request);
+export const updateStatusReserve = (id: number) => {
+  const requestUrl = `${apiUrl}/reserve/${id}`;
+  return axios.put(requestUrl);
 };
 
 export const createRequest = (request: IRequest) => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllRequests } from '../../services/requests.service';
+import {getAllRequests} from '../../services/requests.service';
 import { defaultValue } from '../../shared/request.model';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
